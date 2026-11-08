@@ -9,7 +9,9 @@ from app.stt import GNANI_STT_URL
 from app.stt_params import DEFAULT_MODEL
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
+# Keep uploads bounded for Render memory usage and upstream request safety.
 MAX_UPLOAD_CAP_MB = 25
+DEFAULT_MAX_UPLOAD_MB = 25
 
 
 @dataclass(frozen=True)
@@ -35,9 +37,9 @@ def load_env_file(path: Path) -> None:
 def load_settings(env=None) -> Settings:
     env = os.environ if env is None else env
     try:
-        max_mb = int(env.get("MAX_UPLOAD_MB", "10"))
-    except ValueError:
-        max_mb = 10
+        max_mb = int(env.get("MAX_UPLOAD_MB", str(DEFAULT_MAX_UPLOAD_MB)))
+    except (TypeError, ValueError):
+        max_mb = DEFAULT_MAX_UPLOAD_MB
     return Settings(
         gnani_api_key=env.get("GNANI_API_KEY", "").strip(),
         gnani_stt_url=(env.get("GNANI_STT_URL") or GNANI_STT_URL).strip(),
