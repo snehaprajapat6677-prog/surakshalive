@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, File, Form, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import BACKEND_DIR, Settings, load_env_file, load_settings
 from app.service import (
@@ -26,6 +27,14 @@ app = FastAPI(
     title="Suraksha Live API",
     description="Real-time scam detection and voice threat analysis API.",
     version="0.4.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
