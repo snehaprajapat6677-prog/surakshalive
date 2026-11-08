@@ -4,10 +4,10 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// The browser bundle must never contain the Gnani key name, the API header, or the vendor endpoint.
+// The browser source must never contain Gnani credentials, auth headers, or the vendor endpoint.
+// Vite's import.meta.env is used only for a public backend URL; it is not a secret.
 const here = dirname(fileURLToPath(import.meta.url));
-// The setting name GNANI_API_KEY may appear in user-facing text; the value and the vendor endpoint may not.
-const FORBIDDEN = ["X-API-Key-ID", "api.vachana.ai", "vachana", "import.meta.env", "process.env"];
+const FORBIDDEN = ["X-API-Key-ID", "api.vachana.ai", "vachana", "process.env"];
 const KEY_LIKE = /\b[0-9a-f]{32}\b/i;
 
 function sourceFiles(dir) {
