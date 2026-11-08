@@ -32,7 +32,9 @@ def _map_stt_error(exc: STTError) -> ServiceError:
     if isinstance(exc, (STTConfigError, STTAuthError)):
         return ServiceError(503, str(exc))
     if isinstance(exc, STTQuotaError):
-        return ServiceError(429, str(exc))
+        # Preserve the upstream distinction: exhausted credits (402) are not a rate limit (429).
+        status_code = 402 if exc.http_status == 402 else 429
+        return ServiceError(status_code, str(exc))
     if isinstance(exc, STTRequestError):
         return ServiceError(422, str(exc))
     if isinstance(exc, STTTimeoutError):

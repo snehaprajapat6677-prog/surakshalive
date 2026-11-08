@@ -91,6 +91,11 @@ class ApiTests(unittest.TestCase):
         r = self.http.post("/api/analyze-audio", files={"file": ("call.wav", b"RIFF", "audio/wav")})
         self.assertEqual(r.status_code, 502)
 
+    def test_gnani_insufficient_credit_returns_402(self):
+        self.use(settings(), transport(status=402))
+        r = self.http.post("/api/analyze-audio", files={"file": ("call.wav", b"RIFF", "audio/wav")})
+        self.assertEqual(r.status_code, 402)
+
     def test_oversize_upload_returns_413(self):
         self.use(settings(max_mb=1), transport())
         big = b"x" * (1024 * 1024 + 10)
