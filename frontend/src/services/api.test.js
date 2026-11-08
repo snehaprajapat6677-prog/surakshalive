@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { analyzeAudio, analyzeText, errorMessageFromDetail, fetchHealth } from "./api.js";
 
 const realFetch = globalThis.fetch;
+const API_BASE = "https://surakshalive.onrender.com/api";
 afterEach(() => {
   globalThis.fetch = realFetch;
 });
@@ -15,9 +16,9 @@ function json(status, body) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 }
 
-test("health check calls the backend route and returns its body", async () => {
+test("health check calls the deployed backend route and returns its body", async () => {
   mockFetch((url) => {
-    assert.equal(url, "/api/health");
+    assert.equal(url, `${API_BASE}/health`);
     return json(200, { status: "ok", gnani_configured: false });
   });
   const body = await fetchHealth();
@@ -27,6 +28,7 @@ test("health check calls the backend route and returns its body", async () => {
 test("text analysis sends the transcript as JSON", async () => {
   let sent;
   mockFetch((url, options) => {
+    assert.equal(url, `${API_BASE}/analyze`);
     sent = JSON.parse(options.body);
     assert.equal(options.method, "POST");
     return json(200, { risk_level: "LOW" });
@@ -55,12 +57,13 @@ test("network failure gives a friendly message", async () => {
 test("audio upload sends the file and language as form data", async () => {
   let form;
   mockFetch((url, options) => {
+    assert.equal(url, `${API_BASE}/analyze-audio`);
     form = options.body;
     return json(200, { transcript: "" });
   });
-  await analyzeAudio(new Blob(["RIFF"]), "call.webm", "hi-IN");
+  await analyzeAudio(new Blob(["RIFF"]), "call.wav", "hi-IN");
   assert.ok(form instanceof FormData);
-  assert.equal(form.get("file").name, "call.webm");
+  assert.equal(form.get("file").name, "call.wav");
   assert.equal(form.get("language_code"), "hi-IN");
 });
 
