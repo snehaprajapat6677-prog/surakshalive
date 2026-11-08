@@ -196,8 +196,16 @@ class GnaniSTTClient:
             return STTAuthError("Gnani rejected the API key (HTTP 401). Check GNANI_API_KEY in backend/.env.",
                                 status, gnani_type)
         if status == 403:
-            return STTAuthError("Gnani denied access (HTTP 403). The key may lack STT permission or credit.",
-                                status, gnani_type)
+            # Preserve Gnani's non-secret diagnostic code/message so the UI and
+            # Render logs can distinguish account permission from other denials.
+            reason = f" Gnani code: {gnani_type}." if gnani_type else ""
+            if detail:
+                reason += f" Gnani says: {detail}"
+            return STTAuthError(
+                "Gnani denied this STT request (HTTP 403)." + reason +
+                " Check that this API key is enabled for Prisma STT on the Gnani account.",
+                status, gnani_type
+            )
         if status == 402:
             return STTQuotaError("Gnani reports insufficient credit (HTTP 402). Check the account balance.",
                                  status, gnani_type)
