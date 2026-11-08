@@ -1,0 +1,99 @@
+{
+  "transcript": "Caller: Hello, this is Inspector Sharma from the Cyber Crime Police Station.\nCustomer: Police? Why are you calling me?\nCaller: Your Aadhaar was used in a money laundering case. You are under investigation.\nCustomer: That is not possible.\nCaller: If you do not cooperate, a non-bailable arrest warrant will be issued today.\nCaller: Do not tell anyone about this call and do not disconnect the line.\nCaller: To clear the case, you must pay a security deposit of fifty thousand rupees to our verification account.\n",
+  "mode": "batch",
+  "speech_detected": true,
+  "stt": {
+    "model": "prisma-v3.0",
+    "language_code": "hi-IN",
+    "format": "codemix",
+    "detected_language_code": null,
+    "truncated": false
+  },
+  "analysis": {
+    "risk_level": "HIGH",
+    "score": 13,
+    "critical_indicator": false,
+    "category": "DIGITAL_ARREST",
+    "category_label": "Digital arrest / fake authority",
+    "recommended_action": "Do not comply. Report to 1930 or cybercrime.gov.in.",
+    "utterance_count": 7,
+    "indicators": [
+      {
+        "rule_id": "DA_AUTHORITY",
+        "category": "DIGITAL_ARREST",
+        "weight": 2,
+        "critical": false,
+        "explanation": "Claims to speak for police, a central agency or a court. Real officials do not run arrests or fines over a phone call.",
+        "evidence": [
+          {
+            "line": 1,
+            "text": "Caller: Hello, this is Inspector Sharma from the Cyber Crime Police Station."
+          },
+          {
+            "line": 2,
+            "text": "Customer: Police? Why are you calling me?"
+          }
+        ]
+      },
+      {
+        "rule_id": "DA_ARREST",
+        "category": "DIGITAL_ARREST",
+        "weight": 3,
+        "critical": false,
+        "explanation": "Threatens arrest, a warrant or jail to create fear.",
+        "evidence": [
+          {
+            "line": 5,
+            "text": "Caller: If you do not cooperate, a non-bailable arrest warrant will be issued today."
+          }
+        ]
+      },
+      {
+        "rule_id": "DA_INVESTIGATION",
+        "category": "DIGITAL_ARREST",
+        "weight": 3,
+        "critical": false,
+        "explanation": "Says the person is under investigation or linked to a crime such as money laundering.",
+        "evidence": [
+          {
+            "line": 3,
+            "text": "Caller: Your Aadhaar was used in a money laundering case. You are under investigation."
+          }
+        ]
+      },
+      {
+        "rule_id": "DA_SECRECY",
+        "category": "DIGITAL_ARREST",
+        "weight": 2,
+        "critical": false,
+        "explanation": "Asks the person to keep the call secret or stay connected. Isolation stops the victim from checking.",
+        "evidence": [
+          {
+            "line": 6,
+            "text": "Caller: Do not tell anyone about this call and do not disconnect the line."
+          }
+        ]
+      },
+      {
+        "rule_id": "DA_PAYMENT_DEMAND",
+        "category": "DIGITAL_ARREST",
+        "weight": 3,
+        "critical": false,
+        "explanation": "Demands money for a fine, bail or deposit to avoid arrest.",
+        "evidence": [
+          {
+            "line": 7,
+            "text": "Caller: To clear the case, you must pay a security deposit of fifty thousand rupees to our verification account."
+          }
+        ]
+      }
+    ],
+    "thresholds": {
+      "medium_at": 2,
+      "high_at": 6,
+      "critical_indicator_forces_high": true
+    },
+    "safety_tips": "Never share an OTP, UPI PIN, password or card details on a call. Hang up and call the official number on your card or the bank's website. Cybercrime helpline in India: 1930, or cybercrime.gov.in.",
+    "disclaimer": "Rule-based screening only. A flag is a reason to pause and verify, not proof that a call is fraudulent."
+  }
+}

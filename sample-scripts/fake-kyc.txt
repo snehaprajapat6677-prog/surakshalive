@@ -1,0 +1,6 @@
+Caller: Good evening, I am calling from the bank customer care team regarding your KYC.
+Customer: Okay.
+Caller: Your KYC is pending. Your account will be blocked today if it is not updated.
+Caller: For verification, please tell me the OTP that you just received on your phone.
+Customer: Why do you need the OTP?
+Caller: Our system needs it to confirm your identity. Also share your debit card number and CVV.

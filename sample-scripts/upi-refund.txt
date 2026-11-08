@@ -1,0 +1,5 @@
+Caller: Hello, this is the payments helpline. Your refund of 4,999 rupees is pending.
+Customer: Oh, I did not get any refund.
+Caller: To receive the refund, open your UPI app and enter your UPI PIN now.
+Caller: You will also get a collect request. Approve it so the money is credited.
+Caller: Hurry, the refund reversal expires in 10 minutes.

@@ -1,0 +1,8 @@
+Agent: Thank you for calling Indian Bank customer care, this is Neha. How may I help you today?
+Customer: I want to check my recent refund for a card transaction.
+Agent: Sure. I can see the refund was processed on the 3rd and is credited to your account.
+Agent: For your security, we will never ask for your OTP or UPI PIN, and you should never share them with anyone.
+Customer: Okay, that is good to know.
+Agent: Is there anything else I can help you with?
+Customer: No, thank you.
+Agent: Have a great day.

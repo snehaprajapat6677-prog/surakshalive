@@ -1,0 +1,7 @@
+Caller: Hello, this is Inspector Sharma from the Cyber Crime Police Station.
+Customer: Police? Why are you calling me?
+Caller: Your Aadhaar was used in a money laundering case. You are under investigation.
+Customer: That is not possible.
+Caller: If you do not cooperate, a non-bailable arrest warrant will be issued today.
+Caller: Do not tell anyone about this call and do not disconnect the line.
+Caller: To clear the case, you must pay a security deposit of fifty thousand rupees to our verification account.
