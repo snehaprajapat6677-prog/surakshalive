@@ -1,5 +1,6 @@
-const BASE_URL = "/api";
-const UNREACHABLE = "Cannot reach the Suraksha Live backend. Start it on port 8000 (see README).";
+const API_ORIGIN = (import.meta.env.VITE_API_URL || "https://surakshalive.onrender.com").replace(/\/+$/, "");
+const BASE_URL = `${API_ORIGIN}/api`;
+const UNREACHABLE = "Cannot reach the Suraksha Live backend. Please try again in a moment.";
 
 export function errorMessageFromDetail(detail, status) {
   if (typeof detail === "string" && detail.trim()) return detail;
