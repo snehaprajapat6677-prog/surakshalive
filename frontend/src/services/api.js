@@ -1,4 +1,4 @@
-const API_ORIGIN = (import.meta.env.VITE_API_URL || "https://surakshalive.onrender.com").replace(/\/+$/, "");
+const API_ORIGIN = (import.meta.env?.VITE_API_URL || "https://surakshalive.onrender.com").replace(/\/+$/, "");
 const BASE_URL = `${API_ORIGIN}/api`;
 const UNREACHABLE = "Cannot reach the Suraksha Live backend. Please try again in a moment.";
 
