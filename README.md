@@ -1,130 +1,149 @@
 # Suraksha Live
 
-**Detect the threat before you trust the voice.**
+Suraksha Live is a small project I built to experiment with detecting common phone-scam patterns in Hindi, English and Hinglish speech.
 
-Suraksha Live is a speech-based scam-call screening demo. It transcribes a short audio clip with Gnani Prisma STT, then checks the transcript for suspicious patterns such as digital-arrest threats, fake KYC requests, OTP or UPI PIN requests, and pressure to transfer money.
+The flow is:
 
-The app is a decision-support demo. Its rule-based score is not proof that a call is fraudulent and must not replace independent verification.
+1. Record a short sample in the browser, or choose an audio file.
+2. The frontend sends the audio to the FastAPI backend.
+3. The backend sends it to Gnani Prisma STT and gets a transcript.
+4. A rule-based detector checks the transcript for known warning signs.
+5. The app shows the matched phrases, a risk level and a suggested next step.
 
-## What works
+You can also paste a transcript and run the detector without calling Gnani. That is useful for testing and does not use STT credits.
 
-- Record a short clip in the browser or upload an audio file.
-- Convert browser recordings to 16 kHz mono WAV before upload.
-- Send audio to the configured Gnani Prisma STT endpoint.
-- Analyze the returned transcript with an explainable, rule-based detector.
-- Show risk level, matched indicators, evidence lines, and safety guidance.
-- Analyze pasted text without using Gnani credits.
-- Keep recent results in browser memory for the current session only.
+**This is a prototype, not a bank or police product.** A high-risk result is a warning to stop and verify; it is not proof that a call is a scam. A low-risk result does not guarantee that a call is safe.
 
-## Current limitations
+## What is implemented
 
-- **Batch processing only:** audio is analyzed after recording stops. Continuous live streaming is not implemented.
-- The REST audio request is limited to 30 seconds by the current integration.
-- Speech recognition requires a valid Gnani API key with Prisma STT access and available account quota.
-- No Gnani TTS voice alerts are implemented yet.
-- Detection is rule-based and can miss scams or flag unusual but legitimate wording. Always verify using official contact details.
-- Use synthetic or consented audio only. Do not upload private calls without permission.
+- Browser audio recording and file upload.
+- Audio conversion in the frontend before upload.
+- Batch transcription through the Gnani Prisma REST API.
+- Transcript analysis using explicit pattern rules.
+- Evidence for each matched rule, including the original transcript line.
+- Text-only analysis that works without an STT key.
+- Sample transcripts for digital-arrest, fake-KYC, UPI-refund and legitimate-call scenarios.
 
-## Technology
+## What is not implemented
 
-- Frontend: React, JavaScript, Vite
-- Backend: Python, FastAPI, Pydantic
+- Continuous live transcription or streaming detection. The app waits until recording stops, then uploads the audio.
+- Text-to-speech alerts.
+- A trained machine-learning classifier. The current detector uses regular-expression rules and a weighted score.
+- Guaranteed scam detection. Rules can miss new wording and can also flag legitimate conversations.
+
+The audio request is limited to 30 seconds by the current integration. The upload-size limit is configurable, up to 25 MB.
+
+## Stack
+
+- Frontend: React, JavaScript and Vite
+- Backend: Python and FastAPI
 - Speech-to-text: Gnani Prisma v3.0
-- Tests: Python unittest, Node.js built-in test runner
+- Tests: Python `unittest` and Node's built-in test runner
 
-## Run locally
+## Run it on Windows
 
-### 1. Backend
+### Backend
 
 Python 3.13 is recommended.
 
-~~~powershell
+```powershell
 cd backend
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 Copy-Item .env.example .env
-~~~
+```
 
-Open backend/.env and set your own Gnani key:
+Open `backend/.env` and add your own key:
 
-~~~env
+```env
 GNANI_API_KEY=your_gnani_api_key
 GNANI_STT_MODEL=prisma-v3.0
-MAX_UPLOAD_MB=10
-~~~
+MAX_UPLOAD_MB=25
+```
 
-Never commit .env or share the key. Start the API:
+Keep this key private. Do not commit the `.env` file or paste the key into an issue or chat.
 
-~~~powershell
+Start the backend from the `backend` folder:
+
+```powershell
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-~~~
+```
 
-Health check: http://127.0.0.1:8000/api/health
+The health endpoint is http://127.0.0.1:8000/api/health.
 
-### 2. Frontend
+### Frontend
 
-Open a second terminal:
+Open another terminal:
 
-~~~powershell
+```powershell
 cd frontend
 npm ci
 npm run dev
-~~~
+```
 
-Open the local Vite URL shown in the terminal (normally http://localhost:5173).
+Open the local URL printed by Vite (usually http://localhost:5173).
 
-For a deployed backend, set VITE_API_URL in the Vercel project to the backend origin, for example https://your-backend.onrender.com. If it is not set, the frontend uses https://surakshalive.onrender.com.
+If your backend is running somewhere other than the default deployment, set `VITE_API_URL` to its base URL in the frontend environment. For example:
 
-## Run tests
+```env
+VITE_API_URL=http://127.0.0.1:8000
+```
 
-Backend:
+## Tests
 
-~~~powershell
-cd backend
+Run backend tests from the `backend` folder:
+
+```powershell
 python -m unittest discover -s tests -v
-~~~
+```
 
-Frontend tests and production build:
+Run frontend tests and make a production build from the `frontend` folder:
 
-~~~powershell
-cd frontend
-npm ci
+```powershell
 npm test
 npm run build
-~~~
+```
 
-The backend STT tests use mocked transports. They do not call Gnani and do not consume API credits. A real audio test is separate and requires a working API key.
+The STT client tests use a fake transport. They check request construction and error handling; they do not contact Gnani or prove that the account key has live STT permission.
 
-## Deploy
+## Deployment notes
 
-### Backend on Render
+### Backend (Render)
 
-- Create a Python Web Service from this repository.
-- Set the root directory to backend.
-- Build command: pip install -r requirements.txt
-- Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-- Set environment variables in Render: GNANI_API_KEY, GNANI_STT_MODEL=prisma-v3.0, and MAX_UPLOAD_MB=10.
-- Do not upload .env to GitHub or Render as a file.
+Use `backend` as the service root directory.
 
-### Frontend on Vercel
+- Build command: `pip install -r requirements.txt`
+- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 
-- Import the same repository.
-- Set the root directory to frontend.
-- Build command: npm run build
-- Output directory: dist
-- Set VITE_API_URL to the deployed backend origin if it differs from the default.
+Add these environment variables in the Render service settings:
+
+- `GNANI_API_KEY`: your private Gnani key
+- `GNANI_STT_MODEL`: `prisma-v3.0`
+- `MAX_UPLOAD_MB`: `25`
+
+If `MAX_UPLOAD_MB` is already set to a different value in Render, that value overrides the code default.
+
+### Frontend (Vercel)
+
+Use `frontend` as the project root directory.
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Set `VITE_API_URL` to the backend URL if you are not using the default configured backend.
 
 ## API routes
 
 | Method | Route | Purpose |
 |---|---|---|
-| GET | / | Basic API status |
-| GET | /api/health | Health and configuration status |
-| POST | /api/analyze | Analyze pasted transcript |
-| POST | /api/transcribe | Transcribe audio only |
-| POST | /api/analyze-audio | Transcribe audio and analyze it |
+| GET | `/` | Basic backend status |
+| GET | `/api/health` | Backend and configuration status |
+| POST | `/api/analyze` | Analyze a transcript |
+| POST | `/api/transcribe` | Transcribe an audio file |
+| POST | `/api/analyze-audio` | Transcribe audio, then analyze the transcript |
 
-## Sample scenarios
+One detail about the health check: `gnani_configured: true` only means that a key is present in the backend environment. It does not confirm that Gnani has enabled Prisma STT for that key. A real audio request is needed to check access.
 
-The sample-scripts/ folder contains synthetic examples for digital arrest, fake KYC, UPI refund, and a legitimate call. These are test examples, not real customer conversations.
+## Sample transcripts
+
+The `sample-scripts/` folder contains short, fictional examples used by the detector tests. They are not recordings of real people.
