@@ -153,9 +153,14 @@ class ServiceMappingTests(unittest.TestCase):
         return transcribe_audio(client(transport), kwargs.get("data", WAV), "call.wav",
                                 kwargs.get("language", "hi-IN,en-IN"), 10, kwargs.get("model", "prisma-v3.0"))
 
-    def test_quota_becomes_429(self):
+    def test_insufficient_credit_becomes_402(self):
         with self.assertRaises(ServiceError) as ctx:
             self.run_service(reply(402, raw=b""))
+        self.assertEqual(ctx.exception.status_code, 402)
+
+    def test_rate_limit_becomes_429(self):
+        with self.assertRaises(ServiceError) as ctx:
+            self.run_service(reply(429, raw=b""))
         self.assertEqual(ctx.exception.status_code, 429)
 
     def test_bad_audio_becomes_422_with_gnani_message(self):
