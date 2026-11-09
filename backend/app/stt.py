@@ -107,7 +107,12 @@ def _multipart(fields: dict, file_field: str, filename: str, data: bytes) -> tup
 
 def _http_post(url: str, api_key: str, body: bytes, content_type: str, timeout: float) -> tuple[int, bytes]:
     req = request.Request(url, data=body, method="POST",
-                          headers={"X-API-Key-ID": api_key, "Content-Type": content_type})
+                          headers={
+                              "X-API-Key-ID": api_key,
+                              "Content-Type": content_type,
+                              "Accept": "application/json",
+                              "User-Agent": "SurakshaLive/0.1",
+                          })
     try:
         with request.urlopen(req, timeout=timeout) as resp:
             return resp.status, resp.read()
