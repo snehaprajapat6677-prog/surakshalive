@@ -1,12 +1,9 @@
-"""Gnani Prisma REST client.
+"""Client for Gnani's Prisma speech-to-text REST API.
 
-Checked against docs.gnani.ai/api/STT/speech-to-text.md on 2026-11-06:
-  POST https://api.vachana.ai/stt/v3, multipart/form-data, header X-API-Key-ID
-  Fields: audio_file (required), language_code (required), model, format, itn_native_numerals
-  Accepted audio: WAV, MP3, OGG, FLAC, AAC, M4A. Maximum 30 seconds per request.
-  Success: HTTP 200 with a JSON body containing "transcript" (a string, possibly empty).
-Tests use fake transports. This client has not yet been run against the live API.
-The API key is read on the server, is never returned, and is removed from any message text.
+Sends audio as multipart/form-data to the configured STT endpoint and parses
+the transcript or a sanitized API error. Unit tests use a mocked transport;
+live requests require a valid server-side API key and account access.
+The API key is never returned to the frontend or included in log messages.
 """
 from __future__ import annotations
 
