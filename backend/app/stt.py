@@ -11,11 +11,14 @@ The API key is read on the server, is never returned, and is removed from any me
 from __future__ import annotations
 
 import json
+import logging
 import os
 import uuid
 from urllib import error, request
 
 from app.stt_params import DEFAULT_MODEL, build_stt_fields
+
+logger = logging.getLogger(__name__)
 
 GNANI_STT_URL = "https://api.vachana.ai/stt/v3"
 ALLOWED_EXTENSIONS = {".wav", ".mp3", ".ogg", ".flac", ".aac", ".m4a"}
@@ -192,6 +195,18 @@ class GnaniSTTClient:
     def _error_for_status(self, status: int, raw: bytes) -> STTAPIError:
         gnani_type, gnani_message = _parse_error(raw)
         detail = self._clean(gnani_message)
+
+        # Log only Gnani's response body (never request headers, API key, or audio).
+        # This fallback captures error formats that _parse_error does not yet recognise.
+        try:
+            raw_text = raw.decode("utf-8", errors="replace").strip()
+        except Exception:
+            raw_text = ""
+        safe_body = self._clean(raw_text)[:300]
+        logger.warning(
+            "Gnani STT upstream error: status=%s code=%s response_body=%r",
+            status, gnani_type, safe_body
+        )
         if status == 401:
             return STTAuthError("Gnani rejected the API key (HTTP 401). Check GNANI_API_KEY in backend/.env.",
                                 status, gnani_type)
