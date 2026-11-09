@@ -29,7 +29,7 @@ The app is a decision-support demo. Its rule-based score is not proof that a cal
 
 - Frontend: React, JavaScript, Vite
 - Backend: Python, FastAPI, Pydantic
-- Speech-to-text: Gnani Prisma v3.0
+- Speech-to-text: Gnani Prisma STT (configured model: `prisma-v2.5`)
 - Tests: Python unittest, Node.js built-in test runner
 
 ## Run locally
@@ -50,7 +50,7 @@ Open backend/.env and set your own Gnani key:
 
 ~~~env
 GNANI_API_KEY=your_gnani_api_key
-GNANI_STT_MODEL=prisma-v3.0
+GNANI_STT_MODEL=prisma-v2.5
 MAX_UPLOAD_MB=10
 ~~~
 
@@ -104,7 +104,7 @@ The backend STT tests use mocked transports. They do not call Gnani and do not c
 - Set the root directory to backend.
 - Build command: pip install -r requirements.txt
 - Start command: uvicorn app.main:app --host 0.0.0.0 --port $PORT
-- Set environment variables in Render: GNANI_API_KEY, GNANI_STT_MODEL=prisma-v3.0, and MAX_UPLOAD_MB=10.
+- Set environment variables in Render: GNANI_API_KEY, GNANI_STT_MODEL=prisma-v2.5, and MAX_UPLOAD_MB=10.
 - Do not upload .env to GitHub or Render as a file.
 
 ### Frontend on Vercel
